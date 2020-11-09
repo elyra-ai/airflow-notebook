@@ -17,7 +17,7 @@
 
 """The setup script."""
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -31,7 +31,7 @@ requirements = [
     'tox>=2.9.1',
     'coverage>=4.5.1',
     'twine>=1.10.0',
-    'apache-airflow>=1.10.8',
+    'apache-airflow>=1.10.12',
 ]
 
 setup_requirements = [ ]
@@ -56,9 +56,7 @@ setup(
     include_package_data=True,
     keywords='jupyter, airflow, pipeline, dag',
     name='airflow-notebook',
-    packages=[
-        'notebook.pipeline',
-    ],
+    packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
