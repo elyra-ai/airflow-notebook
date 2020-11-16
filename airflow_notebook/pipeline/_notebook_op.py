@@ -17,7 +17,7 @@ import os
 
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.utils.decorators import apply_defaults
-from elyra._version import __version__
+from airflow_notebook import __version__
 from typing import Dict, List, Optional
 """
 The NotebookOp uses a python script to bootstrap the user supplied image with the required dependencies.
@@ -43,7 +43,6 @@ class NotebookOp(KubernetesPodOperator):
                  cos_dependencies_archive: str,
                  pipeline_outputs: Optional[List[str]] = None,
                  pipeline_inputs: Optional[List[str]] = None,
-                 pipeline_envs: Optional[Dict[str, str]] = None,
                  requirements_url: str = None,
                  bootstrap_script_url: str = None,
                  *args, **kwargs) -> None:
@@ -78,7 +77,6 @@ class NotebookOp(KubernetesPodOperator):
         self.requirements_url = requirements_url
         self.pipeline_outputs = pipeline_outputs
         self.pipeline_inputs = pipeline_inputs
-        self.pipeline_envs = pipeline_envs
         argument_list = []
 
         if not self.bootstrap_script_url:
@@ -133,28 +131,10 @@ class NotebookOp(KubernetesPodOperator):
                 outputs_str = self._artifact_list_to_str(self.pipeline_outputs)
                 argument_list.append('--outputs "{}" '.format(outputs_str))
 
-            if self.pipeline_envs:
-                kwargs['env_vars'] = self.pipeline_envs
-
             kwargs['cmds'] = ['sh', '-c']
             kwargs['arguments'] = "".join(argument_list)
 
         super().__init__(*args, **kwargs)
-
-    def _get_file_name_with_extension(self, name, extension):
-        """
-        Simple function to construct a string filename
-        Args:
-            name: name of the file
-            extension: extension to append to the name
-        Returns:
-            name_with_extension: string filename
-        """
-        name_with_extension = name
-        if extension not in name_with_extension:
-            name_with_extension = '{}.{}'.format(name, extension)
-
-        return name_with_extension
 
     def _artifact_list_to_str(self, pipeline_array):
         trimmed_artifact_list = []
