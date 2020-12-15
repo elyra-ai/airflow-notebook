@@ -65,7 +65,7 @@ class NotebookOp(KubernetesPodOperator):
         """
 
         self.notebook = notebook
-        self.notebook_name = self._get_file_name_with_extension(notebook, 'ipynb')
+        self.notebook_name = self.notebook_name = os.path.basename(notebook)
         self.cos_endpoint = cos_endpoint
         self.cos_bucket = cos_bucket
         self.cos_directory = cos_directory
