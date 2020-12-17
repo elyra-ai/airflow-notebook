@@ -101,35 +101,35 @@ class NotebookOp(KubernetesPodOperator):
                 NOTE: Images being pulled must have python3 available on PATH and cURL utility
             """
 
-            argument_list.append('mkdir -p {container_work_dir} && cd {container_work_dir} && '
-                                 'curl -H "Cache-Control: no-cache" -L {bootscript_url} --output bootstrapper.py && '
-                                 'curl -H "Cache-Control: no-cache" -L {reqs_url} --output requirements-elyra.txt && '
+            argument_list.append("mkdir -p {container_work_dir} && cd {container_work_dir} && "
+                                 "curl -H 'Cache-Control: no-cache' -L {bootscript_url} --output bootstrapper.py && "
+                                 "curl -H 'Cache-Control: no-cache' -L {reqs_url} --output requirements-elyra.txt && "
+                                 "python3 -m pip install packaging && "
+                                 "python3 -m pip freeze > requirements-current.txt && "
+                                 "python3 bootstrapper.py "
+                                 "--cos-endpoint {cos_endpoint} "
+                                 "--cos-bucket {cos_bucket} "
+                                 "--cos-directory '{cos_directory}' "
+                                 "--cos-dependencies-archive '{cos_dependencies_archive}' "
+                                 "--file '{notebook}' "
                                  .format(container_work_dir=self.container_work_dir,
                                          bootscript_url=self.bootstrap_script_url,
-                                         reqs_url=self.requirements_url)
-                                 )
-            argument_list.append('python3 -m pip install packaging && '
-                                 'python3 -m pip freeze > requirements-current.txt && '
-                                 'python3 bootstrapper.py '
-                                 '--cos-endpoint {cos_endpoint} '
-                                 '--cos-bucket {cos_bucket} '
-                                 '--cos-directory "{cos_directory}" '
-                                 '--cos-dependencies-archive "{cos_dependencies_archive}" '
-                                 '--file "{notebook}" '
-                                 .format(cos_endpoint=self.cos_endpoint,
+                                         reqs_url=self.requirements_url,
+                                         cos_endpoint=self.cos_endpoint,
                                          cos_bucket=self.cos_bucket,
                                          cos_directory=self.cos_directory,
                                          cos_dependencies_archive=self.cos_dependencies_archive,
-                                         notebook=self.notebook)
+                                         notebook=self.notebook
+                                         )
                                  )
 
             if self.pipeline_inputs:
                 inputs_str = self._artifact_list_to_str(self.pipeline_inputs)
-                argument_list.append('--inputs "{}" '.format(inputs_str))
+                argument_list.append("--inputs '{}' ".format(inputs_str))
 
             if self.pipeline_outputs:
                 outputs_str = self._artifact_list_to_str(self.pipeline_outputs)
-                argument_list.append('--outputs "{}" '.format(outputs_str))
+                argument_list.append("--outputs '{}' ".format(outputs_str))
 
             kwargs['cmds'] = ['sh', '-c']
             kwargs['arguments'] = "".join(argument_list)
