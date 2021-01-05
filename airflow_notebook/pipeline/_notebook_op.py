@@ -132,7 +132,7 @@ class NotebookOp(KubernetesPodOperator):
                 argument_list.append("--outputs '{}' ".format(outputs_str))
 
             kwargs['cmds'] = ['sh', '-c']
-            kwargs['arguments'] = "".join(argument_list)
+            kwargs['arguments'] = [''.join(argument_list)]
 
         super().__init__(*args, **kwargs)
 

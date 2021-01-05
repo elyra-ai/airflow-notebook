@@ -115,8 +115,10 @@ class FileOpBase(ABC):
             output_list = outputs.split(INOUT_SEPARATOR)
             for file in output_list:
                 self.process_output_file(file.strip())
-        duration = time.time() - t0
-        OpUtil.log_operation_info('outputs processed', duration)
+            duration = time.time() - t0
+            OpUtil.log_operation_info('outputs processed', duration)
+        else:
+            OpUtil.log_operation_info('No outputs found in this operation')
 
     def get_object_storage_filename(self, filename: str) -> str:
         """Function to pre-pend cloud storage working dir to file name
