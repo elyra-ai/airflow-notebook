@@ -16,8 +16,8 @@ limitations under the License.
 {% endcomment %}
 -->
 
-Airflow-Notebook is an Notebook op to enable running notebooks as part of a Airflow DAG.
-This package is installed on the host(s) where Apache Airflow webserver and scheduler 
+Airflow-Notebook is a Notebook operator to enable running notebooks as part of an Airflow DAG.
+This package is installed on the host(s) where Apache Airflow webserver and scheduler
 applications reside.
 
 
@@ -29,71 +29,95 @@ make clean install
 
 ## Usage
 
-Example below on how to use the operator for testing purposes.
+Example below on how to use the airflow operator. This particular DAG was generated with a jinja template in
+Elyra's pipeline editor.
 
 ```python
 from airflow import DAG
-from datetime import datetime, timedelta
-from notebook_op import NotebookOp
+from airflow_notebook.pipeline import NotebookOp
+from airflow.utils.dates import days_ago
 
-def run_notebook_op(op_name, cos_pull_archive, pipeline_outputs, pipeline_inputs):
-    op = NotebookOp(name=op_name,
-                    namespace='default',
-                    task_id=op_name,
-                    notebook=op_name,
-                    cos_endpoint='http://object.storage:30000',
-                    cos_bucket='test-bucket',
-                    cos_directory='test-directory',
-                    cos_pull_archive=cos_pull_archive,
-                    pipeline_outputs=pipeline_outputs,
-                    pipeline_inputs=pipeline_inputs,
-                    image='elyra/tensorflow:1.15.2-py3',
-                    in_cluster=True,
-                    env_vars={'AWS_ACCESS_KEY_ID': 'minio', 'AWS_SECRET_ACCESS_KEY': 'minio123',
-                              'GITHUB_TOKEN': 'XXXXXXXXXXXXX'},
-                    dag=dag,
-    )
-    return op
-
-default_args = {
-    'start_date': datetime(2020, 1, 1),
-    'project_id' : '{{ pipeline_name }}',
-    'retries': 1,
-    'retry_delay': timedelta(minutes=3),
+# Setup default args with older date to automatically trigger when uploaded
+args = {
+    'project_id': 'untitled-0105163134',
 }
 
 dag = DAG(
-    'test_dag',
-    default_args=default_args,
-    description='A Sample Test DAG',
+    'untitled-0105163134',
+    default_args=args,
+    schedule_interval=None,
+    start_date=days_ago(1),
+    description='Created with Elyra 2.0.0.dev0 pipeline editor using untitled.pipeline.',
+    is_paused_upon_creation=False,
 )
 
-notebook_op_1 = run_notebook_op('generate-community-contributions',
-                                'generate-community-contributions-37215ef9-70b2-450d-b1e0-655df0b96d6e.tar.gz',
-                                'community_contributions.csv',
-                                'None'
-                                )
 
-notebook_op_2 = run_notebook_op('generate-overview',
-                                'generate-overview-5244c826-ca17-493c-aeb8-e7a224f44527.tar.gz',
-                                'community_overview.csv',
-                                'None',
-                                )
-
-
-notebook_op_3 = run_notebook_op('overview',
-                                'overview-3dbdd4e8-dc24-489e-bb89-f4e6b9b5e52a.tar.gz',
-                                'None',
-                                'community_contributions.csv,community_overview.csv',
-                                )
-
-notebook_op_1 << notebook_op_3
-
-notebook_op_2 << notebook_op_3
+notebook_op_6055fdfb_908c_43c1_a536_637205009c79 = NotebookOp(name='notebookA',
+                                                              namespace='default',
+                                                              task_id='notebookA',
+                                                              notebook='notebookA.ipynb',
+                                                              cos_endpoint='http://endpoint.com:31671',
+                                                              cos_bucket='test',
+                                                              cos_directory='untitled-0105163134',
+                                                              cos_dependencies_archive='notebookA-6055fdfb-908c-43c1-a536-637205009c79.tar.gz',
+                                                              pipeline_outputs=[
+                                                                  'subdir/A.txt'],
+                                                              pipeline_inputs=[],
+                                                              image='tensorflow/tensorflow:2.3.0',
+                                                              in_cluster=True,
+                                                              env_vars={'AWS_ACCESS_KEY_ID': 'a_key',
+                                                                        'AWS_SECRET_ACCESS_KEY': 'a_secret_key', 'ELYRA_ENABLE_PIPELINE_INFO': 'True'},
+                                                              config_file="None",
+                                                              dag=dag,
+                                                              )
 
 
+notebook_op_074355ce_2119_4190_8cde_892a4bc57bab = NotebookOp(name='notebookB',
+                                                              namespace='default',
+                                                              task_id='notebookB',
+                                                              notebook='notebookB.ipynb',
+                                                              cos_endpoint='http://endpoint.com:31671',
+                                                              cos_bucket='test',
+                                                              cos_directory='untitled-0105163134',
+                                                              cos_dependencies_archive='notebookB-074355ce-2119-4190-8cde-892a4bc57bab.tar.gz',
+                                                              pipeline_outputs=[
+                                                                  'B.txt'],
+                                                              pipeline_inputs=[
+                                                                  'subdir/A.txt'],
+                                                              image='elyra/tensorflow:1.15.2-py3',
+                                                              in_cluster=True,
+                                                              env_vars={'AWS_ACCESS_KEY_ID': 'a_key',
+                                                                        'AWS_SECRET_ACCESS_KEY': 'a_secret_key', 'ELYRA_ENABLE_PIPELINE_INFO': 'True'},
+                                                              config_file="None",
+                                                              dag=dag,
+                                                              )
+
+notebook_op_074355ce_2119_4190_8cde_892a4bc57bab << notebook_op_6055fdfb_908c_43c1_a536_637205009c79
+
+
+notebook_op_68120415_86c9_4dd9_8bd6_b2f33443fcc7 = NotebookOp(name='notebookC',
+                                                              namespace='default',
+                                                              task_id='notebookC',
+                                                              notebook='notebookC.ipynb',
+                                                              cos_endpoint='http://endpoint.com:31671',
+                                                              cos_bucket='test',
+                                                              cos_directory='untitled-0105163134',
+                                                              cos_dependencies_archive='notebookC-68120415-86c9-4dd9-8bd6-b2f33443fcc7.tar.gz',
+                                                              pipeline_outputs=[
+                                                                  'C.txt', 'C2.txt'],
+                                                              pipeline_inputs=[
+                                                                  'subdir/A.txt'],
+                                                              image='elyra/tensorflow:1.15.2-py3',
+                                                              in_cluster=True,
+                                                              env_vars={'AWS_ACCESS_KEY_ID': 'a_key',
+                                                                        'AWS_SECRET_ACCESS_KEY': 'a_secret_key', 'ELYRA_ENABLE_PIPELINE_INFO': 'True'},
+                                                              config_file="None",
+                                                              dag=dag,
+                                                              )
+
+notebook_op_68120415_86c9_4dd9_8bd6_b2f33443fcc7 << notebook_op_6055fdfb_908c_43c1_a536_637205009c79
 ```
 
 ## Generated Airflow DAG
 
-![Airflow DAG Example](docs/source/images/airflow-dag-example.png)
+![Airflow DAG Example](docs/source/images/dag_example.png)
