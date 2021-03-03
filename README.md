@@ -43,6 +43,10 @@ cd airflow-notebook
 make clean install
 ```
 
+### Test coverage
+
+The operator was tested with Apache Airflow v1.10.12.
+
 ## Usage
 
 Example below on how to use the airflow operator. This particular DAG was generated with a jinja template in
