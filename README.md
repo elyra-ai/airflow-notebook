@@ -16,16 +16,36 @@ limitations under the License.
 {% endcomment %}
 -->
 
-Airflow-Notebook is a Notebook operator to enable running notebooks as part of an Airflow DAG.
-This package is installed on the host(s) where Apache Airflow webserver and scheduler
-applications reside.
+[![PyPI version](https://badge.fury.io/py/airflow-notebook.svg)](https://badge.fury.io/py/airflow-notebook)
 
+`airflow-notebook` implements an Apache Airflow operator `NotebookOp` that supports running of notebooks and Python scripts in DAGs.
+To use the operator, install this package on the host(s) where the Apache Airflow webserver, scheduler, and workers are running.
 
-## Building airflow-notebook
+## Installing the airflow-notebook package
+
+You can install the `airflow-notebook` package from PyPI or source code.
+
+### Installing from PyPI
+
+To install `airflow-notebook` from [PyPI](https://pypi.org/project/airflow-notebook/):
 
 ```bash
+pip install airflow-notebook
+```
+
+### Installing from source code
+
+To build `airflow-notebook` from source, Python 3.6 (or later) must be installed. 
+
+```bash
+git clone https://github.com/elyra-ai/airflow-notebook.git
+cd airflow-notebook
 make clean install
 ```
+
+### Test coverage
+
+The operator was tested with Apache Airflow v1.10.12.
 
 ## Usage
 
