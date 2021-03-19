@@ -29,8 +29,19 @@ and have python3
 # same-named variable in bootstrapper.py must be updated!
 INOUT_SEPARATOR = ';'
 
-AIRFLOW_NOTEBOOK_ORG = os.getenv("AIRFLOW_NOTEBOOK_ORG", "elyra-ai")
-AIRFLOW_NOTEBOOK_BRANCH = os.getenv("AIRFLOW_NOTEBOOK_BRANCH", "master" if 'dev' in __version__ else "v" + __version__)
+ELYRA_GITHUB_ORG = os.getenv("ELYRA_GITHUB_ORG", "elyra-ai")
+ELYRA_GITHUB_BRANCH = os.getenv("ELYRA_GITHUB_BRANCH", "master" if 'dev' in __version__ else "v" + __version__)
+
+ELYRA_BOOTSTRAP_SCRIPT_URL = os.getenv('ELYRA_BOOTSTRAP_SCRIPT_URL', 'https://raw.githubusercontent.com/{org}/'
+                                                                     'airflow-notebook/{branch}/etc/docker-scripts/'
+                                                                     'bootstrapper.py'.
+                                                                     format(org=ELYRA_GITHUB_ORG,
+                                                                            branch=ELYRA_GITHUB_BRANCH))
+
+ELYRA_REQUIREMENTS_URL = os.getenv('ELYRA_REQUIREMENTS_URL', 'https://raw.githubusercontent.com/{org}/'
+                                                             'airflow-notebook/{branch}/etc/requirements-elyra.txt'.
+                                                             format(org=ELYRA_GITHUB_ORG,
+                                                                    branch=ELYRA_GITHUB_BRANCH))
 
 
 @apply_defaults
@@ -77,17 +88,14 @@ class NotebookOp(KubernetesPodOperator):
         self.requirements_url = requirements_url
         self.pipeline_outputs = pipeline_outputs
         self.pipeline_inputs = pipeline_inputs
+
         argument_list = []
 
         if not self.bootstrap_script_url:
-            self.bootstrap_script_url = 'https://raw.githubusercontent.com/{org}/' \
-                                        'airflow-notebook/{branch}/etc/docker-scripts/bootstrapper.py'.\
-                format(org=AIRFLOW_NOTEBOOK_ORG, branch=AIRFLOW_NOTEBOOK_BRANCH)
+            self.bootstrap_script_url = ELYRA_BOOTSTRAP_SCRIPT_URL
 
         if not self.requirements_url:
-            self.requirements_url = 'https://raw.githubusercontent.com/{org}/' \
-                                    'airflow-notebook/{branch}/etc/requirements-elyra.txt'.\
-                format(org=AIRFLOW_NOTEBOOK_ORG, branch=AIRFLOW_NOTEBOOK_BRANCH)
+            self.requirements_url = ELYRA_REQUIREMENTS_URL
 
         if 'image' not in kwargs:
             raise ValueError("You need to provide an image.")
