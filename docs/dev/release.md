@@ -25,8 +25,6 @@ some updates during the release steps.
 
 ```bash
 bump2version release
-sed -i'.bak' -e 's/master/0.5.0/g' notebook/pipeline/_notebook_op.py
-rm notebook/pipeline/_notebook_op.py.bak
 git commit -a -m"Airflow Notebook release 0.1.0"
 git tag v0.1.0
 ```
@@ -37,10 +35,8 @@ Note: Use `bump2version suffix` when releasing from a `dev` suffixed version.
 
 ```bash
 make clean dist
-twine upload --sign --repository ibm dist/*
+twine upload --sign dist/*
 ```
-
-Note: the repository **ibm** should be a valid section in the config file (~/.pypirc)
 
 * Preparing to the next development iteration
 
@@ -48,3 +44,6 @@ Note: the repository **ibm** should be a valid section in the config file (~/.py
 bump2version minor
 git commit -a -m"Prepare for next development iteration"
 ```
+
+* Publishing conda-forge package
+    - https://github.com/conda-forge/airflow-notebook-feedstock
