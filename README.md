@@ -17,9 +17,14 @@ limitations under the License.
 -->
 
 [![PyPI version](https://badge.fury.io/py/airflow-notebook.svg)](https://badge.fury.io/py/airflow-notebook)
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/elyra/airflow?label=Container%20image)
 
 `airflow-notebook` implements an Apache Airflow operator `NotebookOp` that supports running of notebooks and Python scripts in DAGs.
-To use the operator, install this package on the host(s) where the Apache Airflow webserver, scheduler, and workers are running.
+To use the operator, configure Airflow to use the Elyra-enabled container image or install this package on the host(s) where the Apache Airflow webserver, scheduler, and workers are running.
+
+## Using the Elyra-enabled airflow container image
+
+Follow the instructions in [this document](https://elyra.readthedocs.io/en/latest/recipes/configure-airflow-as-a-runtime.html).
 
 ## Installing the airflow-notebook package
 
