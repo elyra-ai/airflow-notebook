@@ -146,10 +146,12 @@ class NotebookOp(KubernetesPodOperator):
 
             # Generate unique ELYRA_RUN_ID value and expose it as an
             # environment variable in the container
+            # https://airflow.apache.org/docs/apache-airflow/1.10.12/_api/airflow/contrib/operators/kubernetes_pod_operator/index.html
+            # https://airflow.apache.org/docs/apache-airflow/1.10.12/macros-ref#default-variables
             if 'env_vars' not in kwargs:
                 kwargs['env_vars'] = {}
 
-            kwargs['env_vars']['ELYRA_RUN_ID'] = f'{self.pipeline_name}-{{ run_id }}'
+            kwargs['env_vars']['ELYRA_RUN_ID'] = f'{self.pipeline_name}-{{{{ run_id }}}}'
 
         super().__init__(*args, **kwargs)
 
