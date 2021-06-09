@@ -86,7 +86,7 @@ bdist:
 sdist:
 	python setup.py sdist
 
-dist: clean ## builds source and wheel package
+dist: clean lint ## builds source and wheel package
 	@make sdist
 	@make bdist
 	ls -l dist
