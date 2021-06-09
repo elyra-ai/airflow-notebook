@@ -18,7 +18,7 @@ import os
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.utils.decorators import apply_defaults
 from airflow_notebook import __version__
-from typing import Dict, List, Optional
+from typing import List, Optional
 """
 The NotebookOp uses a python script to bootstrap the user supplied image with the required dependencies.
 In order for the script run properly, the image used, must at a minimum, have the 'curl' utility available
@@ -47,6 +47,7 @@ ELYRA_REQUIREMENTS_URL = os.getenv('ELYRA_REQUIREMENTS_URL', 'https://raw.github
 @apply_defaults
 class NotebookOp(KubernetesPodOperator):
     def __init__(self,
+                 pipeline_name: str,
                  notebook: str,
                  cos_endpoint: str,
                  cos_bucket: str,
@@ -75,6 +76,7 @@ class NotebookOp(KubernetesPodOperator):
                   https://kubeflow-pipelines.readthedocs.io/en/latest/source/kfp.dsl.html#kfp.dsl.ContainerOp
         """
 
+        self.pipeline_name = pipeline_name
         self.notebook = notebook
         self.notebook_name = self.notebook_name = os.path.basename(notebook)
         self.cos_endpoint = cos_endpoint
@@ -141,6 +143,13 @@ class NotebookOp(KubernetesPodOperator):
 
             kwargs['cmds'] = ['sh', '-c']
             kwargs['arguments'] = [''.join(argument_list)]
+
+            # Generate unique ELYRA_RUN_ID value and expose it as an
+            # environment variable in the container
+            if 'env_vars' not in kwargs:
+                kwargs['env_vars'] = {}
+
+            kwargs['env_vars']['ELYRA_RUN_ID'] = f'{self.pipeline_name}-{{ run_id }}'
 
         super().__init__(*args, **kwargs)
 
