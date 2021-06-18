@@ -56,13 +56,16 @@ clean-test:
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-lint: ## check style with flake8
-	flake8 airflow tests
+test-dependencies:
+	@pip install -q -r test-requirements.txt
 
-test: ## run tests quickly with the default Python
+lint: test-dependencies ## check style with flake8
+	flake8 airflow_notebook
+
+test: test-dependencies ## run tests quickly with the default Python
 	python setup.py test
 
-test-all: ## run tests on every Python version with tox
+test-all: test-dependencies ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
@@ -83,10 +86,11 @@ bdist:
 sdist:
 	python setup.py sdist
 
-dist: clean ## builds source and wheel package
+dist: clean lint ## builds source and wheel package
 	@make sdist
 	@make bdist
 	ls -l dist
 
 install: clean dist ## install the package to the active Python's site-packages
 	pip install --upgrade dist/*.whl
+
