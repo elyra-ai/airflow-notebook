@@ -18,7 +18,7 @@ import os
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.utils.decorators import apply_defaults
 from airflow_notebook import __version__
-from typing import Dict, List, Optional
+from typing import List, Optional
 """
 The NotebookOp uses a python script to bootstrap the user supplied image with the required dependencies.
 In order for the script run properly, the image used, must at a minimum, have the 'curl' utility available
